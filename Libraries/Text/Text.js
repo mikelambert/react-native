@@ -30,6 +30,7 @@ const viewConfig = {
     isHighlighted: true,
     numberOfLines: true,
     allowFontScaling: true,
+    selectable: true,
   }),
   uiViewClassName: 'RCTText',
 };
@@ -89,6 +90,11 @@ const Text = React.createClass({
      * This function is called on long press.
      */
     onLongPress: React.PropTypes.func,
+    /**
+     * Lets the user select text, to use the native copy and paste functionality.
+     * @platform android
+     */
+    selectable: React.PropTypes.bool,
     /**
      * When true, no visual change is made when text is pressed down. By
      * default, a gray oval highlights the text on press down.
