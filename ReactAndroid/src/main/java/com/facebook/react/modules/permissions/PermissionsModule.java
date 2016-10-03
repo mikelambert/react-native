@@ -10,6 +10,7 @@
 package com.facebook.react.modules.permissions;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Process;
@@ -47,13 +48,13 @@ public class PermissionsModule extends ReactContextBaseJavaModule implements Per
    */
   @ReactMethod
   public void checkPermission(final String permission, final Promise promise) {
-    PermissionAwareActivity activity = getPermissionAwareActivity();
+    Context context = getReactApplicationContext().getBaseContext();
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      promise.resolve(activity.checkPermission(permission, Process.myPid(), Process.myUid()) ==
+      promise.resolve(context.checkPermission(permission, Process.myPid(), Process.myUid()) ==
         PackageManager.PERMISSION_GRANTED);
       return;
     }
-    promise.resolve(activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+    promise.resolve(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
   }
 
   /**
@@ -81,13 +82,13 @@ public class PermissionsModule extends ReactContextBaseJavaModule implements Per
    */
   @ReactMethod
   public void requestPermission(final String permission, final Promise promise) {
-    PermissionAwareActivity activity = getPermissionAwareActivity();
+    Context context = getReactApplicationContext().getBaseContext();
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      promise.resolve(activity.checkPermission(permission, Process.myPid(), Process.myUid()) ==
+      promise.resolve(context.checkPermission(permission, Process.myPid(), Process.myUid()) ==
               PackageManager.PERMISSION_GRANTED);
       return;
     }
-    if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+    if (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
       promise.resolve(true);
       return;
     }
@@ -100,6 +101,7 @@ public class PermissionsModule extends ReactContextBaseJavaModule implements Per
           }
         });
 
+    PermissionAwareActivity activity = getPermissionAwareActivity();
     activity.requestPermissions(new String[]{permission}, mRequestCode, this);
     mRequestCode++;
   }
