@@ -10,10 +10,12 @@
 package com.facebook.react.modules.location;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -188,17 +190,33 @@ public class LocationModule extends ReactContextBaseJavaModule {
     mWatchedProvider = null;
   }
 
+
+  private boolean isProviderEnabled(LocationManager locationManager, String provider) {
+    try {
+      // Before API version LOLLIPOP, this method would throw SecurityException
+      // if the location permissions were not sufficient to use the specified provider.
+      return locationManager.isProviderEnabled(provider);
+    } catch (SecurityException e) {
+      return false;
+    }
+  }
+
   @Nullable
-  private static String getValidProvider(LocationManager locationManager, boolean highAccuracy) {
+  private String getValidProvider(LocationManager locationManager, boolean highAccuracy) {
     String provider =
         highAccuracy ? LocationManager.GPS_PROVIDER : LocationManager.NETWORK_PROVIDER;
-    if (!locationManager.isProviderEnabled(provider)) {
+    if (!isProviderEnabled(locationManager, provider)) {
       provider = provider.equals(LocationManager.GPS_PROVIDER)
           ? LocationManager.NETWORK_PROVIDER
           : LocationManager.GPS_PROVIDER;
-      if (!locationManager.isProviderEnabled(provider)) {
+      if (!isProviderEnabled(locationManager, provider)) {
         return null;
       }
+    }
+    // If it's an enabled provider, but we don't have permissions, ignore it
+    int finePermission = ContextCompat.checkSelfPermission(getReactApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+    if (provider.equals(LocationManager.GPS_PROVIDER) && finePermission != PackageManager.PERMISSION_GRANTED) {
+      return null;
     }
     return provider;
   }
