@@ -9,14 +9,12 @@
 
 'use strict';
 
-const babelRegisterOnly = require('./packager/babelRegisterOnly');
+const babelRegisterOnly = require('./packager/src/babelRegisterOnly');
 const escapeRegExp = require('lodash/escapeRegExp');
 const path = require('path');
 
 const BABEL_ENABLED_PATHS = [
-  'packager/react-packager/react-packager.js',
-  'packager/react-packager/src',
-  'packager/transformer.js',
+  'packager/src',
   'local-cli',
 ];
 

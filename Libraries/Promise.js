@@ -14,6 +14,8 @@
 const prettyFormat = require('pretty-format');
 const Promise = require('fbjs/lib/Promise.native');
 
+const prettyFormat = require('pretty-format');
+
 if (__DEV__) {
   require('promise/setimmediate/rejection-tracking').enable({
     allRejections: true,
